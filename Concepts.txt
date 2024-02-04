@@ -1,0 +1,177 @@
+# About Django
+
+- Django  provides us with django-admin command line utility to perform various operation i.e. starting project, etc
+
+# About Django Project Directory Structure
+
+- Root/Outer Directory is that directory under which we get manage.py file
+- Inner Project Folder is formed under root directory
+- __init__.py : The folder which contains __init__.py file is considered as python package
+- wsgi.py : WSGI(Web Server Gateway Interface) is an inteface b/w webserver and web application (coded when we require any apache server setup or something like that)
+- asgi.py : ASGI(Asynchronous Server Gateway Interface) It is an successor to wsgi inteded to provide a standard interface b/w async-capable python web server and applications.
+- settings.py : This file contains all the information or data about project settings (***important) i.e. Database Config, Installed Application, Validators etc.
+- urls.py : This file contains info of url attached with application
+- manage.py : manage.py is automatic created in each django project, It is django's command line utility which help to start the application running, it is easier to user manage.py instead django-admin while working on single django project
+- __pycache__ : This folder is created while running the application, it's purpose is to provide faster loading of the application by using cached codes of wsgi,settings,urls etc
+
+# About Django Project Application Directory Structure
+
+- Migration Folder : This folder contains __init__.py file which means it is an python package, It also contains all files which are created after running makemigration command
+- __init__.py : The folder which contains __init__.py file is considered as pythong package
+- admin.py : This file is used to register sql tables so we could perform CRUD operation from Admin Application. Admin Application is provided by Django to perform CRUD operations.
+- apps.py : This file is used to Config app.
+- models.py :  This file is used to create our own model class later these classes will be converted into database tabel by Django for our application.
+- tests.py : This is files is used to create tests i.e. TestCases for your co
+- views.py : This file is used to create view. We write all the business logic related code in this file.
+
+# Basic concepts used in settings.py file
+
+- BASE_DIR :  is a variable which contains abspath of base directory/ project folder e.g. - C:\AllDjango\geekyshows
+- SECRET_KEY : This is used to provide cryptographic signing, and should be set to a unique, unpredictable value. django-admin startporject automatically adds a randorm-generated SECRET_KEY to each new project, Django will refuse to start if SECRET_KEY is not set.
+- Uses of SECRET_KEY: All session if you are using any other session backend, all messages if you are using CookieStorage or Fallback Storage, all passwordResetView token, any usage of cryptographic signing unless a different key is not provided
+- DEBUG = True : A boolean that turn on/off debug mode, never deploy a site into production with DEBUG turned on
+- ALLOWED_HOSTS = [] : a list of strings representing the host/Domain names that this Django site can server
+- INSTALLED_APP : ***important  These are built in applications provided by django-admin, evey if we want install our own application we can type it here and re-run the server
+- MIDDLEWARE : ***important A list of middleware we use
+- ROOT_URLCONF: i.e. 'geekyshows.urls'
+- TEMPLATES: A list containing the settings for all templates engines to be used with django
+- WSGI_APPLICATION : The full python path of the WSGI application object that Django's built-in servers (e.g. runserver) will use.
+- DATABASE : A dictionary containing the settings for all database to be used  with Django.
+- AUTH_PASSWORD_VALIDATORS : The list of Validators that are used to check the strength of user's passwords
+- STATIC_URL = '/static/' : URL to use when referring to static files located in STATIC_ROOT.
+
+# URL Dispatcher Or Concepts of url.py
+
+- To Design URLs for app, you create a python module informally named urls.py This module is pure python code and is a mapping between URL path expressions to view funcions.
+- This mapping  can be short or as long as needed
+- It can reference other mappings.
+- It's pure Python code so it can be constructed dynamically
+-   urls.py : 
+    urlpatterns = [
+        path(route, view, kwargs=None, name=None),
+        ...
+    ]
+    i.e.
+    urlpatterns = [
+        path('learndj/', views.learn_django, {'check': 'OK'}, name='learn_django'),
+    ]
+- path(route, view, kwargs=None, name=None) - It returns an element for inclusion in urlpatterns
+    - The route string may contain <username> to capture part of the URL and send it as a keyword argument to the view
+    - The view argument is a veiw function or the result of as_view() for class-based views. It can also be an django.url.include()
+    - The kwargs argument  allows you to pass addtional arguments to the view function or method. It should be a dictionary
+    - name is used to perform URL reversing
+
+# Multiple Application inside project
+- In such cases we need to carefully tackle URL Dispatcher concept, here we need to implement aliasing for importing view in url.py
+- i.e:  'from course import views as cv'
+        'from fees import views as fe'
+- Here 'course' and 'fees' are different application of same project
+
+# Segragating urls of each application from url.py making each application more independent
+- urlpatterns = [
+    path('cor/', include('course.urls')) // here include() considers all the url pattern of course application for respective route
+  ]
+
+# Cookies
+- Cookie is a piece of text data which is set by server on client machine and once it's been set client automatically return the cookie to the server with each request it makes
+- Cookie is just a platform to carry forward sessionId to client from server
+- 1) Session Cookie (It is destroyed when user quite browser)
+- 2) Persistent Cookie (The browser keeps it up until their expiration date is reached)
+
+# Object Relational Mapper (ORM)
+- ORM which enables application to interact with database such as SQLite, MySql etc.
+- ORMs automatically creates a database schema from defined classes or models. It generates SQL from python code for a particular database which means developer do not need to write SQL Code.
+- ORM maps object attributes to respective table fields of database
+- ORM uses connectors to connect database with a web application
+
+# QuerySet
+- A QuerySet can be defined as a list containing all those objects we have created using the django model.
+- QuerySet allow you to read the data from the database, filter it and order it
+
+# Model
+- A model is the single, definitive source of information about your data.
+- It contains the essential fields and behaviors of the data you're storing, Generally each model maps to a single database table
+- Each attribute of model represents a database field.
+
+# Migrations
+- Migrations are Django's way of propagating changes you make to your models (adding field, deleting a model etc) into your database schema
+
+--> makemigrations : This is responsible for creating new migrations based on the change you have made to your models. (It is used to convert model class to sql statements, It creates files like 0001_initial.py which contains sql statements)
+>> python manage.py makemigrations
+
+--> migrate : This is responsible for applying and unapplying migrations (we run this command to execute sql statements generated by makemigrations)
+>> python manage.py migrate
+
+--> sqlmigrate : This display the SQL statements for a migration
+>> python manage.py sqlmigrate <application_name> <dbfile_name>
+
+--> showmigrations : This lists a project's migrations and their status
+>> python manage.py showmigrations
+
+# To Get Table inside Admin we must have to register our model
+- We are registering our table which we created using model class, to default admin interface
+>> admin.site.register(<ModalClassName>)
+
+# __str__ method
+-  It returns string representation of an instance of User model
+-  By default Django provides this method but if we don’t provide then also it will return something like: <User object at 0x7f6c8d43b9
+-  By default Django provides this method but if we don’t provide then also it will return something like "<User: User object>"
+example : 
+def __str__(self):
+    return self.username + " - " + str(self.id)
+
+# ModelAdmin class
+- The ModelAdmin class is the representation of a model in the admin interface
+- To show table's all data in admin interface we have to create an ModelAdmin class in admin.py file of Application folder
+
+# Register Model by decorator
+@admin.register(<ModalClassName1>, <ModalClassName2>, ..., site=custom_admin_site)
+
+# Cross Site Request Forgery (CSRF / XSRF)
+- CSRF protection helps prevent cross-site request forgery attacks.
+- A Cross-site request forgery hole is when a malicious site can cause a vistor's browser to make a request to your server
+  that causes a change on the server. The server thinks that because the request comes with the user's cookies, ther user wanted to submit that form.
+- Depending on which forms on your site are vulnerable, that can be target of attacker
+- Django provides CSRF Protection with csrf_token which we need to add inside form tag. This token will add a hidden input field with random value in form tag.
+- <form>{% csrf_token %}</form>
+
+# Form Data in Django
+- fm.cleaned_data['name'] (Gives clean value of each form attributes on POST/Submit request)
+- fm.is_valid() (Check for standard validation for a form in django)
+
+# HttpResponseRedirect
+- HttpResponseRedirect takes a single argument: the URL to which the user will be redirected
+
+# To save formvalues on post request
+- save() // given as default way to save data to admin db of django
+i.e.
+- To get
+    pi = User.objects.get(pk=1)
+- To insert and update
+    reg = User(name=nm, email=em, password=pw) // object initiated of UserModelClass, to update single item add one paramater id=1 for eg.
+    reg.save()
+- To delete
+    reg = User(id=1)
+    reg.delete()
+
+# Model Form
+- Django provides a helper class that lets you create a Form class from a Django model. This helper class is called as ModelForm
+
+# save(commit=False/True) method
+- This method creates and saves a database object from the data bound to the form
+- A subclass of ModelForm can accept an existing model instance as the keyword argument instance, if this is supplied, save() will update that instance
+- It it's not supplied, save() will create a new instance of the specified model.
+- commit=False , in this case form is not saved to database, it is useful for debugging purpose
+
+# Dynamic URL
+- You can also pass extra parameters in url pattern like :
+  path('user/add/<int:uid>/', views.add_extra_parameter, name='add_extra_parameter')
+- Path Converters
+    - str (default if none type is provided) : Matches any non-empty, excluding the path separator, '/'. This is the default if a converter isn't included in the expression
+    - int : Matches zero or an y positive integer. Returns an int.
+    - slug : Matches any slug string consisting of ASCII letters or numbers, plus the hyphen and underscore characters. For e.g. building-your-1st-django-site
+- kwargs=None => The kwargs arguments allows you to pass additional arguments to the view function or method. It should be a dictionary
+- Custom Path Converters
+
+# How to stop Django application
+>> ctrl + c
