@@ -173,5 +173,27 @@ i.e.
 - kwargs=None => The kwargs arguments allows you to pass additional arguments to the view function or method. It should be a dictionary
 - Custom Path Converters
 
+# Selecting ModelFormFields in Django
+- class Meta :
+    model = User
+    # fields = ['name', 'email', 'password']
+    # fields = '__all__' (this automatically  selects all fields in the model)
+    exclude = ['password'] (This excludes password field from being selected by using fields attribute)
+
+# ModelForm Inhertance
+- If you want to use some common functionality across multiple forms then you can make a baseform and extend that BaseForm into your desired form.
+- class User(models.Model):
+    student_name = models.CharField()
+    teacher_name = models.CharField()
+    email = models.EmailField()
+- class StudentRegistration(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['student_name', 'email']
+
+- class TeacherRegistration(StudentRegistration)
+    class Meta(StudentRegistration.Meta):
+        fields = ['teacher_name', 'email']
+
 # How to stop Django application
 >> ctrl + c
